@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Naive Bayes Income Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { margin: 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Naive Bayes Income Predictor</h2>
+    <h4>This model predicts whether a person earns more than $50K based on input features.</h4>
+    <p>Enter the following values :</p>
+    <p>1. Age, 2. Education-num, 3. Capital-gain, 4. Capital-loss, 5. Hours-per-week</p>
+    
+    <input type="text" id="features" placeholder="Enter values">
+    <button onclick="getPrediction()">Predict</button>
+    <p id="result"></p>
+
+    <script>
+        async function getPrediction() {
+            let input = document.getElementById("features").value;
+            let featureArray = input.split(",").map(Number);
+
+            let response = await fetch("http://127.0.0.1:8011/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ features: featureArray })
+            });
+
+            let data = await response.json();
+            let predictionText = data.prediction === 1 ? "Income > $50K" : "Income ≤ $50K";
+            document.getElementById("result").innerText = "Prediction: " + predictionText;
+        }
+    </script>
+</body>
+</html>
