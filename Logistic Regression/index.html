@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistic Regression Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input, select, button { margin: 10px; padding: 10px; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Breast Cancer Prediction</h2>
+    <p>Enter feature values :</p>
+    <input type="text" id="features" placeholder="Enter values">
+    <br>
+    <label>Select Model Type:</label>
+    <select id="model_type">
+        <option value="l1">L1 (Lasso)</option>
+        <option value="l2">L2 (Ridge)</option>
+        <option value="elasticnet">ElasticNet</option>
+    </select>
+    <br>
+    <button onclick="predict()">Predict</button>
+    <p id="result"></p>
+
+    <script>
+        function predict() {
+            let features = document.getElementById("features").value.split(",").map(Number);
+            let modelType = document.getElementById("model_type").value;
+    
+            fetch("http://127.0.0.1:8003/predict", { 
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ data: features, model_type: modelType })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let predictionText = data.prediction === 1 ? "Malignant (Cancerous)" : "Benign (No Cancer)";
+                document.getElementById("result").innerText = "Prediction: " + predictionText;
+            })
+            .catch(error => {
+                document.getElementById("result").innerText = "Error: " + error;
+            });
+        }
+    </script>
+     
+</body>
+</html>
